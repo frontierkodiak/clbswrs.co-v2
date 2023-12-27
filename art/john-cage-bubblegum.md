@@ -1,6 +1,6 @@
 ---
 layout: post
-title: combinatorics
+title: John Cage Bubblegum
 permalink: /art/john-cage-bubblegum
 ---
 

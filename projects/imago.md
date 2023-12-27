@@ -1,6 +1,6 @@
 ---
 layout: page
-title: imago
+title: Imago
 permalink: /projects/imago
 ---
 

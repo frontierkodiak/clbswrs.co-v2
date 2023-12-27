@@ -1,6 +1,6 @@
 ---
 layout: post
-title: combinatorics
+title: Combinatorics
 permalink: /art/combinatorics
 ---
 <br>

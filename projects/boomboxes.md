@@ -1,6 +1,6 @@
 ---
 layout: page
-title: boomboxes
+title: Boomboxes
 permalink: /projects/boomboxes
 ---
 
