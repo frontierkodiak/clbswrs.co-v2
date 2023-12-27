@@ -2,13 +2,13 @@
 
 #google_analytics: UA-NNNNNNNN-N
 
-#header_pages:
-#  - index.md
-#  - about.md
+header_pages:
+ - art.md
+ - projects.md
 
-#footer: 'follow us on <a href="https://twitter.com/">twitter</a>'
+footer: "[email](mailto:caleb@polli.ai) · [github](https://github.com/frontierkodiak) · [twitter](https://twitter.com/calebsowers7) · [linkedin](https://www.linkedin.com/in/calebsowers/)"
 
-#style: light # dark (default) or light
+style: light # dark (default) or light
 #listen_for_clients_preferred_style: true # true or false (default)
 
 plugins:

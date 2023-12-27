@@ -1,5 +1,8 @@
 {%- assign page_paths = site.header_pages | default: default_paths -%}
 <header>
+  <div class="header-left">
+    <h1 class="header-title"><a href="{{ site.baseurl }}/" class="header-link">Caleb Sowers</a></h1>
+  </div>
   <div class="menu">
     <ul>
       {%- for path in page_paths -%}
