@@ -1,5 +1,5 @@
 ---
-title: home
+title: Home
 layout: home
 permalink: /
 ---
@@ -20,7 +20,3 @@ My company, [Polli Labs](https://polli.ai) builds [hardware](https://polli.ai/ha
 
 <br>
 <br>
-
-
-cd /Users/caleb/Documents/GitHub/clbswrs.co-v2/assets/img/john-cage-bubblegum/fullsize
-mogrify -path /Users/caleb/Documents/GitHub/clbswrs.co-v2/assets/img/john-cage-bubblegum/600x -resize 600x *
