@@ -6,6 +6,11 @@ permalink: /projects/
 
 <br>
 
+![4243](/assets/img/combinatorics/fullsize/4243.70p.jpg){: .center-image width="300px" }
+
+<br>
+<br>
+
 ### Current
 
 

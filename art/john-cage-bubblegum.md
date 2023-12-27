@@ -25,9 +25,9 @@ ___
 <br>
 
 ![installed view](/assets/img/john-cage-bubblegum/600x/20191216_133740.jpg){: width="295" } ![upper-left detail](/assets/img/john-cage-bubblegum/600x/5.JPG-70p.jpg){: width="295" }
-![underneath close](/assets/img/john-cage-bubblegum/600x/DSC09210.JPG)
-![underneath broad](/assets/img/john-cage-bubblegum/600x/DSC09293.JPG)
-![close-up](/assets/img/john-cage-bubblegum/600x/3.JPG-70p.jpg)
-![top-down](/assets/img/john-cage-bubblegum/600x/1.JPG-70p.jpg)
-![bottom close-up](/assets/img/john-cage-bubblegum/600x/2.JPG-70p.jpg)
+![underneath close](/assets/img/john-cage-bubblegum/fullsize/DSC09210.JPG){: .center-image width="600px" }
+![underneath broad](/assets/img/john-cage-bubblegum/fullsize/DSC09293.JPG){: .center-image width="600px" }
+![close-up](/assets/img/john-cage-bubblegum/fullsize/3.JPG-70p.jpg){: .center-image width="600px" }
+![top-down](/assets/img/john-cage-bubblegum/fullsize/1.JPG-70p.jpg){: .center-image width="600px" }
+![bottom close-up](/assets/img/john-cage-bubblegum/fullsize/2.JPG-70p.jpg){: .center-image width="600px" }
 ![installed view](/assets/img/john-cage-bubblegum/fullsize/DSC09306.JPG){: width="600" }

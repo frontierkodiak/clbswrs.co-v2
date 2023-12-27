@@ -17,109 +17,109 @@ ___
 <br>
 <br>
 
-![Slip Moon](/assets/img/stereoscopes/600x/Slip_Moon.jpg)
+![Slip Moon](/assets/img/stereoscopes/fullsize/Slip_Moon.jpg){: .center-image width="600px" }
 *Slip Moon*
 
 <br>
 <br>
 
-![Hyperpole](/assets/img/stereoscopes/600x/Hyperpole.70p.jpg)
+![Hyperpole](/assets/img/stereoscopes/fullsize/Hyperpole.70p.jpg){: .center-image width="600px" }
 *Hyperpole*
 
 <br>
 <br>
 
-![Cathedral](/assets/img/stereoscopes/600x/Workshop.70p.jpg)
+![Cathedral](/assets/img/stereoscopes/fullsize/Workshop.70p.jpg){: .center-image width="600px" }
 *Cathedral*
 
 <br>
 <br>
 
-![Telephase](/assets/img/stereoscopes/600x/Telephasic.70p.jpg)
+![Telephase](/assets/img/stereoscopes/fullsize/Telephasic.70p.jpg){: .center-image width="600px" }
 *Telephase*
 
 <br>
 <br>
 
-![Camayenne](/assets/img/stereoscopes/600x/Camayenne.70p.jpg)
-*Camayenne*
+![Cayamenne](/assets/img/stereoscopes/fullsize/Cayamenne.70p.jpg){: .center-image width="600px" }
+*Cayanenne*
 
 <br>
 <br>
 
-![Chorus](/assets/img/stereoscopes/600x/Chorus.70p.jpg)
+![Chorus](/assets/img/stereoscopes/fullsize/Chorus.70p.jpg){: .center-image width="600px" }
 *Chorus*
 
 <br>
 <br>
 
-![Documentation Rate](/assets/img/stereoscopes/600x/Documentation_Rate.0q.png)
+![Documentation Rate](/assets/img/stereoscopes/fullsize/Documentation_Rate.70p.png){: .center-image width="600px" }
 *Documentation Rate*
 
 <br>
 <br>
 
-![Dozer](/assets/img/stereoscopes/600x/Dozer.70p.jpg)
+![Dozer](/assets/img/stereoscopes/fullsize/Dozer.70p.jpg){: .center-image width="600px" }
 *Dozer*
 
 <br>
 <br>
 
-![Horn](/assets/img/stereoscopes/600x/Horn.70p.jpg)
+![Horn](/assets/img/stereoscopes/fullsize/Horn.70p.jpg){: .center-image width="600px" }
 *Horn*
 
 <br>
 <br>
 
-![Nut](/assets/img/stereoscopes/600x/Nut.70p.jpg)
-*Nut*
+![Nut](/assets/img/stereoscopes/fullsize/Nut.70p.jpg){: .center-image width="500px" }
+                *Nut*
 
 <br>
 <br>
 
-![Pistil](/assets/img/stereoscopes/600x/Pistil.70p.jpg)
+![Pistil](/assets/img/stereoscopes/fullsize/Pistil.70p.jpg){: .center-image width="600px" }
 *Pistil*
 
 <br>
 <br>
 
-![Queen_Anne](/assets/img/stereoscopes/600x/Queen_Anne.70p.jpg)
+![Queen_Anne](/assets/img/stereoscopes/fullsize/Queen_Anne.70p.jpg){: .center-image width="600px" }
 *Queen_Anne*
 
 <br>
 <br>
 
-![Rue](/assets/img/stereoscopes/600x/Rue.70p.jpg)
+![Rue](/assets/img/stereoscopes/fullsize/Rue.70p.jpg){: .center-image width="600px" }
 *Rue*
 
 <br>
 <br>
 
-![Chalus](/assets/img/stereoscopes/600x/Chalus.70p.jpg)
-*Chalus*
+![Chalus](/assets/img/stereoscopes/fullsize/Chalus.70p.jpg){: .center-image width="500px" }
+                *Chalus*
 
 <br>
 <br>
 
-![SYMPATRIC](/assets/img/stereoscopes/600x/SYMPATRIC.70p.jpg)
-*SYMPATRIC*
+![SYMPATRIC](/assets/img/stereoscopes/fullsize/SYMPATRIC.70p.jpg){: .center-image width="500px" }
+                *SYMPATRIC*
 
 <br>
 <br>
 
-![Superfine](/assets/img/stereoscopes/600x/Superfine.70p.jpg)
+![Superfine](/assets/img/stereoscopes/fullsize/Superfine.70p.jpg){: .center-image width="600px" }
 *Superfine*
 
 <br>
 <br>
 
-![Wash](/assets/img/stereoscopes/600x/Wash.70p.jpg)
+![Wash](/assets/img/stereoscopes/fullsize/Wash.70p.jpg){: .center-image width="600px" }
 *Wash*
 
 <br>
 <br>
 
-![Window](/assets/img/stereoscopes/600x/Window.70p.jpg)
+![Window](/assets/img/stereoscopes/fullsize/Window.70p.jpg){: .center-image width="600px" }
 *Window*
 
 <br>
