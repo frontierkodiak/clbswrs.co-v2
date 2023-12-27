@@ -4,7 +4,8 @@ layout: home
 permalink: /
 ---
 
-![Slip Moon](/assets/img/stereoscopes/600x/Slip_Moon.jpg)
+<!-- ![Slip Moon](/assets/img/stereoscopes/600x/Slip_Moon.jpg) -->
+![4243](/assets/img/combinatorics/fullsize/Field.1.png){: .center-image width="300px" }
 
 <br>
 

@@ -6,7 +6,7 @@ permalink: /projects/
 
 <br>
 
-![4243](/assets/img/combinatorics/fullsize/Field.1.png){: .center-image width="300px" }
+![684](/assets/img/combinatorics/fullsize/684.70p.jpg){: .center-image width="300px" }
 
 <br>
 <br>
