@@ -23,6 +23,12 @@ ___
 <br>
 <br>
 
+![The Theologians](/assets/img/stereoscopes/fullsize/The_Theologians.png){: .center-image width="500px" }
+                *The Theologians*
+
+<br>
+<br>
+
 ![Hyperpole](/assets/img/stereoscopes/fullsize/Hyperpole.70p.jpg){: .center-image width="600px" }
 *Hyperpole*
 
@@ -43,6 +49,12 @@ ___
 
 ![Cayamenne](/assets/img/stereoscopes/fullsize/Cayamenne.70p.jpg){: .center-image width="600px" }
 *Cayanenne*
+
+<br>
+<br>
+
+![Eel 1](/assets/img/stereoscopes/fullsize/Eel.1.png){: .center-image width="500px" }
+                *Eel 1*
 
 <br>
 <br>
@@ -119,8 +131,8 @@ ___
 <br>
 <br>
 
-![Window](/assets/img/stereoscopes/fullsize/Window.70p.jpg){: .center-image width="600px" }
-*Window*
+![Window](/assets/img/stereoscopes/fullsize/Window.70p.jpg){: .center-image width="500px" }
+                *Moreira's Window*
 
 <br>
 <br>
