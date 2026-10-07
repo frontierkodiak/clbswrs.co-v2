@@ -197,7 +197,7 @@ pre { background-color: var(--background-color);  border: none;  padding: 0;  ma
 .stream-provenance { opacity: .7; }
 .publisher { margin-top: 20px; }
 .publisher label { display: block; margin: 16px 0 5px; }
-.publisher input, .publisher textarea, .publisher select { box-sizing: border-box; padding: 10px; border: 1px solid currentColor; font: inherit; border-radius: 3px; }
+.publisher input, .publisher textarea, .publisher select { box-sizing: border-box; width: 100%; padding: 10px; border: 1px solid currentColor; font: inherit; border-radius: 3px; }
 .publisher textarea { min-height: 150px; }
 .publisher #reaction { min-height: 60px; }
 .publisher button { margin-top: 16px; padding: 10px 16px; font: inherit; cursor: pointer; }
