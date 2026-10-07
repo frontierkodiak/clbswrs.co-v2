@@ -111,7 +111,7 @@ input, select, textarea, textarea::-webkit-input-placeholder { text-indent: 0px;
 ::-ms-input-placeholder { color: var(--placeholder-color); }
 input[type=submit] { font-size: $base-font-size;  font-family: $base-font-family;  line-height: $base-line-height;  cursor: pointer;  color: var(--link-color);  background-color: var(--background-color); }
 input[type=submit]:hover { color: var(--background-color); background-color: var(--base-color); }
-*:focus { outline: none; }
+:focus-visible { outline: 2px solid currentColor;  outline-offset: 3px; }
 textarea { vertical-align: top; }
 
 /**

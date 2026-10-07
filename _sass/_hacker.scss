@@ -2,7 +2,8 @@
  * Hacker theme variables
  */
 
-:root {
+@mixin theme {
+  :root {
   --base-color: #00ff00;
   --border: dashed 1px rgba(0, 255, 0, 0.9);
   --selection-background: rgba(0, 255, 0, 0.99);
@@ -29,4 +30,5 @@
   --code-color-16: #1e90ff;
   --code-color-17: #800000;
   --code-color-18: #bbbbbb;
+  }
 }

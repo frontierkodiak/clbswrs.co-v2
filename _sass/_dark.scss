@@ -2,7 +2,8 @@
  * Dark theme variables
  */
 
-:root {
+@mixin theme {
+  :root {
   --base-color: #DBDBDB;
   --border: dashed 1px rgba(219, 219, 219, 0.9);
   --selection-background: rgba(219, 219, 219, 0.99);
@@ -29,4 +30,5 @@
   --code-color-16: #1e90ff;
   --code-color-17: #800000;
   --code-color-18: #bbbbbb;
+  }
 }

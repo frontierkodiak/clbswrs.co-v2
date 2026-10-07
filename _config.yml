@@ -1,10 +1,11 @@
-# Example Site settings
-
-#google_analytics: UA-NNNNNNNN-N
+url: "https://clbswrs.co"
+baseurl: ""
+repository: frontierkodiak/clbswrs.co-v2
+lang: en
 
 header_pages:
- - art.md
- - projects.md
+  - art.md
+  - projects.md
 
 footer: "[email](mailto:caleb@polli.ai) · [github](https://github.com/frontierkodiak) · [twitter](https://twitter.com/calebsowers7) · [linkedin](https://www.linkedin.com/in/calebsowers/)"
 
@@ -13,3 +14,12 @@ style: light # dark (default) or light
 
 plugins:
   - jekyll-seo-tag
+
+strict_front_matter: true
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - Makefile
+  - README.md
+  - vendor
