@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "cgi"
 require "date"
 require "time"
 require_relative "redaction"
@@ -19,6 +20,7 @@ module Transcripts
     MODES = { "human" => %w[verbatim condensed], "agent" => %w[summary] }.freeze
     RULES = %w[human-verbatim agent-summarised tools-omitted turns-selected redacted].freeze
     STATUSES = %w[draft approved].freeze
+    WORK_KINDS = { "note" => "the note", "project" => "the project", "art" => "the work" }.freeze
     REDACTION_MARK = /\[redacted (?:secret|path|host|address|email)\]/
     PLACEHOLDER = /\A\s*(?:TODO|TBD|FIXME)\b/
 
@@ -146,16 +148,17 @@ module Transcripts
         "tool_calls" => src.dig("counts", "tool_calls")
       }
 
+      prev = nil
       chapters = Array(data["chapters"]).each_with_index.map do |ch, ci|
-        prev = nil
         turns = Array(ch["turns"]).each_with_index.map do |t, ti|
           at = Time.iso8601(t["at"]).getlocal(offset)
           gap = prev ? ((at - prev) / 60).round : nil
+          day = at.strftime("%-d %b") if prev.nil? || prev.to_date != at.to_date
           prev = at
           {
             "anchor" => "t#{ci + 1}-#{ti + 1}",
             "clock" => at.strftime("%H:%M"),
-            "elapsed" => duration(at - started, clock: true),
+            "day" => day,
             "gap" => gap && gap >= 45 ? duration(gap * 60) : nil
           }
         end
@@ -185,6 +188,7 @@ module Transcripts
       {
         "id" => id,
         "url" => url,
+        "work_kind" => WORK_KINDS[data.dig("work", "id").to_s.split("/").first],
         "human" => human,
         "agent" => agent,
         "harness" => HARNESSES[src["harness"]],
@@ -210,7 +214,11 @@ module Transcripts
       }
     end
 
+    # Sentences of HTML; names and the omitted note come from the digest, so
+    # they are escaped here.
     def preface(data, c, human, agent)
+      human = CGI.escapeHTML(human)
+      agent = CGI.escapeHTML(agent)
       rules = Array(data["editing"])
       lines = []
       if rules.include?("human-verbatim")
@@ -223,13 +231,14 @@ module Transcripts
       end
       if rules.include?("agent-summarised")
         s = "#{agent}’s replies are replaced by <em>one-line italic summaries</em>, written afterwards"
-        s += c["excerpts"].positive? ? "; #{count(c["excerpts"], "opens", "open")} to the verbatim text." : "."
+        s += c["excerpts"].positive? ? "; #{count(c["excerpts"], "opens", "open")} to a verbatim passage." : "."
         lines << s
       end
       lines << "Commands, file edits and their output are left out." if rules.include?("tools-omitted")
       if rules.include?("turns-selected")
-        lines << "#{c["shown"]} of the session’s #{c["messages"]} messages are shown " \
-                 "(#{c["human_shown"]} of #{c["human_messages"]} of #{human}’s)."
+        lines << "#{c["shown"]} of the session’s #{c["messages"]} messages are shown, " \
+                 "including #{c["human_shown"]} of #{human}’s #{c["human_messages"]}."
+        lines << CGI.escapeHTML(data["omitted"].strip) unless blank?(data["omitted"])
       end
       if rules.include?("redacted")
         lines << if c["redactions"].positive?
@@ -252,10 +261,8 @@ module Transcripts
       end
     end
 
-    def duration(seconds, clock: false)
-      mins = (seconds / 60.0).round
-      h, m = mins.divmod(60)
-      return format("%d:%02d", h, m) if clock
+    def duration(seconds)
+      h, m = (seconds / 60.0).round.divmod(60)
       return "#{m} min" if h.zero?
 
       m.zero? ? "#{h} h" : "#{h} h #{m} min"

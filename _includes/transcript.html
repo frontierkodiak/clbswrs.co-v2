@@ -7,12 +7,12 @@
 {%- assign x = d._ -%}
 {%- assign v = include.variant | default: "a" -%}
 <article class="tx tx--{{ v }}">
-  <header class="tx-head">
+  <div class="tx-head">
     <h1 class="tx-title">{{ d.title | escape }}</h1>
     {%- if x.draft %}
     <p class="tx-draft">Draft. Not approved for publication.</p>
     {%- endif %}
-    <p class="tx-prov">A curated transcript of the {{ x.harness }} session behind {% if d.work.url %}<a href="{{ d.work.url | relative_url }}">{{ d.work.title | escape }}</a>{% else %}<cite>{{ d.work.title | escape }}</cite>{% endif %}, {{ x.date }}.</p>
+    <p class="tx-prov">A curated transcript of the {{ x.harness }} session behind {% if x.work_kind %}{{ x.work_kind }} {% endif %}{% if d.work.url %}<a href="{{ d.work.url | relative_url }}">{{ d.work.title | escape }}</a>{% else %}<cite>{{ d.work.title | escape }}</cite>{% endif %}, {{ x.date }}.</p>
     {%- if v == "c" %}
     <ol class="tx-strip" aria-label="Every message in the session, in order: {{ x.counts.human_messages }} from {{ x.human }}, {{ x.counts.agent_messages }} from {{ x.agent }}">
       {%- for cell in x.strip -%}
@@ -25,7 +25,7 @@
     {%- if v == "b" %}
     <p class="tx-ledger tx-ledger--top">{{ x.ledger | join: " · " }}</p>
     {%- endif %}
-  </header>
+  </div>
 
   {%- for ch in d.chapters %}
   {%- assign cx = x.chapters[forloop.index0] %}
@@ -35,6 +35,9 @@
     {%- assign tx = cx.turns[forloop.index0] %}
     {%- if v == "b" and tx.gap %}
     <p class="tx-gap"><span>{{ tx.gap }} later</span></p>
+    {%- endif %}
+    {%- if v == "b" and tx.day %}
+    <p class="tx-day">{{ tx.day }}</p>
     {%- endif %}
     <div class="tx-turn tx-turn--{{ t.role }}" id="{{ tx.anchor }}">
       {%- if v == "b" %}
@@ -49,7 +52,7 @@
       {%- if t.excerpt %}
         <details class="tx-excerpt">
           <summary>{{ t.excerpt.label | default: "verbatim" | escape }}</summary>
-          <div class="tx-excerpt-text">{{ t.excerpt.text | strip | escape }}</div>
+          <div class="tx-excerpt-text">{{ t.excerpt.text | markdownify }}</div>
         </details>
       {%- endif %}
       </div>
@@ -58,7 +61,7 @@
   </section>
   {%- endfor %}
 
-  <footer class="tx-foot">
+  <div class="tx-foot">
     {%- if d.summary %}
     <p class="tx-summary">{{ d.summary | escape }}</p>
     {%- endif %}
@@ -66,5 +69,5 @@
     <p class="tx-ledger">{{ x.ledger | join: " · " }}</p>
     {%- endunless %}
     <p class="tx-source">{{ x.harness }}{% if d.source.harness_version %} {{ d.source.harness_version }}{% endif %}, {{ x.models }}. Session {{ d.source.session | slice: 0, 8 }}. Times from the session log, {{ x.zone }}.</p>
-  </footer>
+  </div>
 </article>

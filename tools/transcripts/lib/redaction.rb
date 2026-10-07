@@ -40,7 +40,12 @@ module Transcripts
     ].freeze
 
     # Home directories, mounts and temp paths on any of the fleet's systems.
-    PATH_PATTERN = %r{(?<![\w.~/-])(?:~|/Users|/home|/root|/mango|/var/folders|/private|/Volumes|/mnt|/media|/opt/homebrew|[A-Z]:\\Users)[/\\][^\s'"`)\]>,;]*|(?:file|obsidian|vscode|cursor)://[^\s'"`)\]>]+}
+    # A quoted path may contain spaces; take it to the closing quote.
+    QUOTED_PATH_PATTERN = %r{(?<=['"`])(?:~|/Users|/home|/root|/mango|/var/folders|/private|/Volumes|/mnt|/media|/opt/homebrew)/[^'"`\n]*(?=['"`])}
+    PATH_PATTERN = %r{(?<![\w.~/-])(?:~|/Users|/home|/root|/mango|/var/folders|/private|/Volumes|/mnt|/media|/opt/homebrew|[A-Z]:\\Users)[/\\][^\s'"`)\]>,;]*|(?:file|obsidian|vscode|cursor|codex|claude)://[^\s'"`)\]>]+}
+
+    # Links an agent writes relative to the home directory (Desktop/…).
+    HOME_RELATIVE_PATTERN = %r{(?<![\w.~/%-])(?:Desktop|Documents|Downloads|Library|Movies|Music|Pictures|Dropbox)/[^\s'"`)\]>,;]*}
 
     TAILNET_PATTERN = /\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.ts\.net\b|\btail[0-9a-f]{5}\b/i
 
@@ -109,7 +114,9 @@ module Transcripts
       end
 
       SECRET_PATTERNS.each { |re| text.to_enum(:scan, re).each { emit.call("secret", Regexp.last_match) } }
+      text.to_enum(:scan, QUOTED_PATH_PATTERN).each { emit.call("path", Regexp.last_match) }
       text.to_enum(:scan, PATH_PATTERN).each { emit.call("path", Regexp.last_match) }
+      text.to_enum(:scan, HOME_RELATIVE_PATTERN).each { emit.call("path", Regexp.last_match) }
       text.to_enum(:scan, TAILNET_PATTERN).each { emit.call("host", Regexp.last_match) }
       text.to_enum(:scan, ADDRESS_PATTERN).each { emit.call("address", Regexp.last_match) }
       text.to_enum(:scan, EMAIL_PATTERN).each do

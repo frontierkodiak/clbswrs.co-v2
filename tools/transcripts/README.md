@@ -91,7 +91,8 @@ chapters:
         msg: 7
         at: '2026-08-10T18:31:00Z'
         text: Ran the continuation from the five-cycle system and found a fold.
-        excerpt: {label: its reasoning, text: …}   # optional, verbatim
+        excerpt: {label: its reasoning, text: …}   # optional; a verbatim passage of the reply or its logged reasoning
+omitted: What was cut, in a sentence.  # optional; appended to the preface
 summary: One closing sentence.         # optional
 ```
 

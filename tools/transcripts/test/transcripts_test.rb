@@ -23,6 +23,8 @@ class RedactionTest < Minitest::Test
       "see /Users/someone/dev/x.py" => "path",
       "in ~/vault/fieldwork/note.md" => "path",
       "open obsidian://open?vault=x" => "path",
+      "see codex://threads/019f5d0e" => "path",
+      "in [REVIEW.md](Desktop/pinboard/x%20y/REVIEW.md)" => "path",
       "host box.tail1a2b3.ts.net" => "host",
       "ssh examplehost" => "host",
       "on examplehost-2 again" => "host",
@@ -46,6 +48,10 @@ class RedactionTest < Minitest::Test
   def test_redact_replaces_in_place
     assert_equal "ran [redacted path] on [redacted host] with [redacted secret]",
                  R.redact("ran /Users/someone/x.sh on examplehost with sk-#{"Zz9" * 9}")
+  end
+
+  def test_quoted_path_with_spaces
+    assert_equal "look in '[redacted path]' first", R.redact("look in '/Users/someone/Desktop/3D Lotka-Volterra with Cycles' first")
   end
 
   def test_allow_list
@@ -132,7 +138,9 @@ class DigestTest < Minitest::Test
     assert_equal "1 h 45 min", x["wall"]
     assert_equal "14:00", x["chapters"][0]["turns"][0]["clock"]
     assert_equal "1 h 10 min", x["chapters"][0]["turns"][2]["gap"]
-    assert_includes x["preface"].join(" "), "4 of the session’s 5 messages are shown"
+    assert_equal "10 Aug", x["chapters"][0]["turns"][0]["day"]
+    assert_nil x["chapters"][0]["turns"][1]["day"]
+    assert_includes x["preface"].join(" "), "4 of the session’s 5 messages are shown, including 2 of Caleb’s 2."
     assert_includes x["preface"].join(" "), "(two places)"
     assert_equal "$3.14 at API prices, as reported by Claude Code", x["cost"]
     assert_equal [1, nil, 1, 1, 1], x["strip"].map { |c| c["chapter"] }

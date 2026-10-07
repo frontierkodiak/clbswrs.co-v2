@@ -70,9 +70,12 @@ module Transcripts
           end
         end
 
+        # The span runs from the first message to the last; a notification
+        # appended days later doesn't stretch it.
+        said = messages.map(&:at).compact
         Session.new(
           harness: "claude-code", harness_version: version, session: session,
-          models: models.uniq, started: times.min, ended: times.max,
+          models: models.uniq, started: said.min || times.min, ended: said.max || times.max,
           messages: messages, tool_calls: tool_calls,
           cost: cost && { "usd" => cost.round(2), "basis" => "at API prices, as reported by Claude Code" },
           tokens: usage.empty? ? nil : usage.to_h, warnings: [], **Adapters.file_facts(path)
@@ -94,10 +97,15 @@ module Transcripts
         text = text.gsub(%r{<system-reminder>.*?</system-reminder>}m, "").strip
         return if text.empty? || INJECTED.any? { |p| text.start_with?(p) }
 
-        origin = case r["promptSource"]
-                 when "typed", "queued" then "typed"
-                 when "sdk" then r["turnOrigin"] == "human" ? "typed" : "dispatched"
-                 else r["entrypoint"] == "sdk-cli" ? "dispatched" : "unknown"
+        # The desktop app sends what a person types through the SDK too; an
+        # orchestrator (Multica, a script) runs the headless sdk-cli entrypoint.
+        origin = if %w[typed queued].include?(r["promptSource"]) || r["turnOrigin"] == "human" ||
+                    r["entrypoint"] == "claude-desktop"
+                   "typed"
+                 elsif r["entrypoint"] == "sdk-cli"
+                   "dispatched"
+                 else
+                   "unknown"
                  end
         Message.new(role: "h", at: t, text: text, origin: origin)
       end

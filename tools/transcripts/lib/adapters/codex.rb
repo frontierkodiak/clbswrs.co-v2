@@ -100,7 +100,7 @@ module Transcripts
 
         Session.new(
           harness: "codex", harness_version: meta["cli_version"], session: meta["id"] || meta["session_id"],
-          models: models.uniq, started: [start, times.min].compact.min, ended: times.max,
+          models: models.uniq, started: messages.map(&:at).min || start, ended: messages.map(&:at).max || times.max,
           messages: messages, tool_calls: tool_calls, cost: nil,
           tokens: tokens && tokens.slice("input_tokens", "cached_input_tokens", "output_tokens", "reasoning_output_tokens"),
           warnings: warnings, **Adapters.file_facts(path)
