@@ -184,3 +184,32 @@ pre { background-color: var(--background-color);  border: none;  padding: 0;  ma
     display: block;
     margin: 0 auto;
 }
+
+/** Stream */
+.stream-intro { margin-top: 8px; }
+.stream-day { margin: 32px 0 18px; font-size: 1.1em; font-weight: normal; }
+.stream-entry { margin: 0 0 26px; }
+.stream-entry h3 { margin: 0 0 10px; }
+.stream-text { white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 12px; }
+.stream-entry blockquote { margin: 0 0 12px; padding-left: 16px; border-left: 2px solid var(--text-color); }
+.stream-credit { margin-bottom: 14px; }
+.stream-meta, .stream-provenance { font-size: .9em; margin-bottom: 5px; }
+.stream-provenance { opacity: .7; }
+.publisher { margin-top: 20px; }
+.publisher label { display: block; margin: 16px 0 5px; }
+.publisher input, .publisher textarea, .publisher select { box-sizing: border-box; padding: 10px; border: 1px solid currentColor; font: inherit; border-radius: 3px; }
+.publisher textarea { min-height: 150px; }
+.publisher #reaction { min-height: 60px; }
+.publisher button { margin-top: 16px; padding: 10px 16px; font: inherit; cursor: pointer; }
+.publisher details { margin: 20px 0; }
+.publisher [hidden] { display: none; }
+.publisher #status { margin: 18px 0; }
+.publisher .pairing-key { overflow-wrap: anywhere; }
+@media (pointer: coarse) {
+  // Prevent iOS input auto-zoom without disabling the reader's pinch zoom.
+  .publisher input, .publisher textarea, .publisher select, .publisher button {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+  .publisher button { touch-action: manipulation; }
+}

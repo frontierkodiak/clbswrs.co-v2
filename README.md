@@ -50,3 +50,10 @@ and archival review.
 The visual foundation originated with
 [jekyll-theme-console](https://github.com/b2a3e8/jekyll-theme-console) and remains
 available under the [MIT License](LICENSE.txt).
+
+## Stream
+
+The mixed stream lives at `/stream/`, with Atom at `/stream/atom.xml` and literal
+plain text at `/llms-full.txt`. Phone setup and signed Shortcuts are at
+`/stream/install/`. See [the implementation and acceptance handoff](docs/stream.md)
+for the file contract, retry behaviour, verification and remaining phone checks.

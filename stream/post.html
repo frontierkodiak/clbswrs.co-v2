@@ -1,0 +1,49 @@
+---
+layout: default
+title: Post to stream
+permalink: /stream/post/
+publisher: true
+robots: noindex, nofollow
+---
+<h1>Post to stream</h1>
+<div class="publisher">
+  <p>Your words are posted as entered. Nothing is rewritten.</p>
+  <details id="settings">
+    <summary>Phone setup</summary>
+    <p>Use a fine-grained GitHub token for <strong>frontierkodiak/clbswrs.co-v2 only</strong>, with Contents: read and write. It stays in this browser, not in posts or links.</p>
+    <label for="token">GitHub token</label>
+    <input id="token" type="password" autocomplete="off" spellcheck="false">
+    <button id="save-token" type="button">Save on this phone</button>
+    <button id="forget-token" type="button">Forget access</button>
+    <p id="access-status" role="status"></p>
+    <button id="pair" type="button">Pair two-tap quotations</button>
+    <p>Copy this pairing key into the quotation Shortcuts when installing them. It is separate from your GitHub token.</p>
+    <input id="pairing-key" class="pairing-key" readonly aria-label="Shortcut pairing key">
+    <p><a href="{{ '/stream/install/' | relative_url }}">Installation note and Shortcuts</a></p>
+  </details>
+  <form id="post-form">
+    <label for="kind">Kind</label>
+    <select id="kind"><option value="note">Note</option><option value="quotation">Quotation</option><option value="link">Link</option></select>
+    <div id="note-title-fields">
+      <label for="title">Title (optional)</label>
+      <input id="title" autocomplete="off">
+    </div>
+    <label id="text-label" for="text">Note</label>
+    <textarea id="text" autofocus></textarea>
+    <div id="source-fields" hidden>
+      <label for="source-title">Source title</label><input id="source-title" autocomplete="off">
+      <label for="source-url">Source URL</label><input id="source-url" type="url" autocomplete="off">
+      <label for="source-author">Name / creator (optional)</label><input id="source-author" autocomplete="off">
+    </div>
+    <div id="reaction-fields" hidden>
+      <label for="reaction">Reaction (optional)</label><textarea id="reaction" rows="2"></textarea>
+    </div>
+    <label for="tags">Tags (optional, comma-separated)</label><input id="tags" autocomplete="off">
+    <button id="publish" type="submit">Post</button>
+    <button id="discard" type="button">Discard draft</button>
+  </form>
+  <p id="status" role="status" aria-live="polite"></p>
+  <p id="receipt" hidden></p>
+  <noscript>This posting page needs JavaScript. The public stream does not.</noscript>
+</div>
+<script type="module" src="{{ '/assets/stream/publisher.mjs' | relative_url }}"></script>

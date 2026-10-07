@@ -2,6 +2,19 @@ url: "https://clbswrs.co"
 baseurl: ""
 repository: frontierkodiak/clbswrs.co-v2
 lang: en
+timezone: America/New_York
+
+collections:
+  stream:
+    output: true
+    permalink: /stream/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: stream
+    values:
+      layout: stream-entry
 
 header_pages:
   - art.md
@@ -23,3 +36,6 @@ exclude:
   - Makefile
   - README.md
   - vendor
+  - docs
+  - tools
+  - tests

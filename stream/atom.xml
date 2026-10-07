@@ -1,0 +1,33 @@
+---
+layout: null
+permalink: /stream/atom.xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en" xml:base="{{ site.url | append: site.baseurl | append: '/' | xml_escape }}">
+  <title>Caleb Sowers — Stream</title>
+  <id>{{ '/stream/' | absolute_url | xml_escape }}</id>
+  <link href="{{ '/stream/' | absolute_url | xml_escape }}"/>
+  <link href="{{ '/stream/atom.xml' | absolute_url | xml_escape }}" rel="self" type="application/atom+xml"/>
+  <author><name>Caleb Sowers</name></author>
+  {% assign entries = site.stream | sort: 'date' | reverse %}
+  {% assign latest_updated = entries.first.date | default: site.time %}
+  {% assign latest_epoch = latest_updated | date: '%s' | plus: 0 %}
+  {% for entry in entries %}
+    {% assign entry_updated = entry.updated | default: entry.date %}
+    {% assign entry_epoch = entry_updated | date: '%s' | plus: 0 %}
+    {% if entry_epoch > latest_epoch %}{% assign latest_updated = entry_updated %}{% assign latest_epoch = entry_epoch %}{% endif %}
+  {% endfor %}
+  <updated>{{ latest_updated | date_to_xmlschema }}</updated>
+  {% for entry in entries %}
+  <entry>
+    <title>{{ entry.title | default: entry.source_title | default: entry.text | truncate: 100 | xml_escape }}</title>
+    <id>{{ entry.url | absolute_url | xml_escape }}</id>
+    <link href="{{ entry.url | absolute_url | xml_escape }}"/>
+    <published>{{ entry.date | date_to_xmlschema }}</published>
+    <updated>{{ entry.updated | default: entry.date | date_to_xmlschema }}</updated>
+    {% for tag in entry.tags %}<category term="{{ tag | xml_escape }}"/>{% endfor %}
+    {% capture body %}{% include stream-body.html entry=entry %}{% endcapture %}
+    <content type="html">{{ body | xml_escape }}</content>
+  </entry>
+  {% endfor %}
+</feed>
