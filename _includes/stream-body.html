@@ -1,0 +1,16 @@
+{% assign entry = include.entry %}
+{% if entry.kind == 'art' or entry.kind == 'timeline' or entry.kind == 'research' %}
+  <p><a href="{{ entry.target_url | relative_url }}">{{ entry.title | escape }}</a>{% if entry.date_label %} — {{ entry.date_label | escape }}{% endif %} <small>({{ entry.kind | escape }})</small></p>
+{% else %}
+  {% if entry.title and entry.title != '' %}<h3>{{ entry.title | escape }}</h3>{% endif %}
+  {% if entry.kind == 'quotation' %}
+    <blockquote><div class="stream-text">{{ entry.text | escape }}</div></blockquote>
+    <p class="stream-credit">— {% if entry.source_author and entry.source_author != '' %}{{ entry.source_author | escape }}, {% endif %}<a href="{{ entry.source_url | escape }}"><em>{{ entry.source_title | escape }}</em></a></p>
+    {% if entry.reaction and entry.reaction != '' %}<div class="stream-text stream-reaction">{{ entry.reaction | escape }}</div>{% endif %}
+  {% elsif entry.kind == 'link' %}
+    <p><a href="{{ entry.source_url | escape }}">{{ entry.source_title | escape }}</a>{% if entry.source_author and entry.source_author != '' %} — {{ entry.source_author | escape }}{% endif %}</p>
+    {% if entry.text and entry.text != '' %}<div class="stream-text">{{ entry.text | escape }}</div>{% endif %}
+  {% else %}
+    <div class="stream-text">{{ entry.text | escape }}</div>
+  {% endif %}
+{% endif %}

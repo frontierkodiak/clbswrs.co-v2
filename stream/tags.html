@@ -1,0 +1,19 @@
+---
+layout: default
+title: Stream tags
+permalink: /stream/tags/
+---
+<h1>Stream tags</h1>
+<p><a href="{{ '/stream/' | relative_url }}">All entries</a></p>
+{% assign entries = site.stream | sort: 'date' | reverse %}
+{% assign tags = site.stream | map: 'tags' | join: ',' | split: ',' | uniq | sort %}
+{% for tag in tags %}
+  <h2 id="{{ tag | slugify }}">{{ tag | escape }}</h2>
+  <ul>
+    {% for entry in entries %}
+      {% if entry.tags contains tag %}
+        <li><a href="{{ entry.url | relative_url }}">{{ entry.title | default: entry.source_title | default: entry.text | truncate: 80 | escape }}</a> · {{ entry.date | date: '%Y-%m-%d' }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endfor %}

@@ -1,0 +1,3 @@
+{% assign entry = include.entry %}
+<p class="stream-meta"><a href="{{ entry.url | relative_url }}" aria-label="Permalink">#</a> <time datetime="{{ entry.date | date_to_xmlschema }}">{{ entry.date | date: '%-I:%M %P' }}</time>{% for tag in entry.tags %} / <a href="{{ '/stream/tags/' | relative_url }}#{{ tag | slugify }}">{{ tag | escape }}</a>{% endfor %}</p>
+{% if entry.date_source %}<p class="stream-provenance">{{ entry.date_source | escape }}{% if entry.date_source_url %} · <a href="{{ entry.date_source_url | escape }}">source</a>{% endif %}</p>{% endif %}

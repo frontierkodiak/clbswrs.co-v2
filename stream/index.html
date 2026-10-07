@@ -1,0 +1,20 @@
+---
+layout: default
+title: Stream
+permalink: /stream/
+---
+<h1>Stream</h1>
+<p class="stream-intro"><a href="{{ '/stream/atom.xml' | relative_url }}">Atom</a> · <a href="{{ '/stream/tags/' | relative_url }}">Tags</a> · <a href="{{ '/llms-full.txt' | relative_url }}">Plain text</a></p>
+{% assign entries = site.stream | sort: 'date' | reverse %}
+{% assign previous_day = '' %}
+{% for entry in entries %}
+  {% assign day = entry.date | date: '%Y-%m-%d' %}
+  {% if day != previous_day %}
+    <h2 class="stream-day"><time datetime="{{ day }}">{{ entry.date | date: '%B %-d, %Y' }}</time></h2>
+    {% assign previous_day = day %}
+  {% endif %}
+  <article class="stream-entry">
+    {% include stream-body.html entry=entry %}
+    {% include stream-footer.html entry=entry %}
+  </article>
+{% endfor %}

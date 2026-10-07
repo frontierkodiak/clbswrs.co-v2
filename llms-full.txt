@@ -1,0 +1,15 @@
+---
+layout: null
+permalink: /llms-full.txt
+---
+{% assign entries = site.stream | sort: 'date' | reverse %}{% for entry in entries %}({{ entry.date | date: '%Y-%m-%d' }}; {{ entry.kind }}, {% if entry.source_title and entry.source_title != '' %}{{ entry.source_title }}{% else %}clbswrs.co{% endif %})
+{{ entry.url | absolute_url }}
+{% if entry.title and entry.title != '' %}{{ entry.title }}
+{% endif %}{% if entry.kind == 'art' or entry.kind == 'timeline' or entry.kind == 'research' %}{{ entry.target_url | absolute_url }}{% if entry.date_label %} — {{ entry.date_label }}{% endif %}
+{% else %}{{ entry.text }}
+{% if entry.source_url and entry.source_url != '' %}— {% if entry.source_author and entry.source_author != '' %}{{ entry.source_author }}, {% endif %}{{ entry.source_title }} ({{ entry.source_url }})
+{% endif %}{% if entry.reaction and entry.reaction != '' %}{{ entry.reaction }}
+{% endif %}{% endif %}Date: {{ entry.date | date_to_xmlschema }}; {{ entry.date_source }}
+Tags: {{ entry.tags | join: ', ' }}
+
+{% endfor %}
