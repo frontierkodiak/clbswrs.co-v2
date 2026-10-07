@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Draft a transcript digest from a raw session log.
+#
+#   tools/transcripts/draft claude-code ~/.claude/projects/<project>/<session>.jsonl --id my-digest
+#   tools/transcripts/draft codex ~/.codex/sessions/2026/08/10/rollout-….jsonl --id my-digest \
+#     --work-id note/lv-six-cycles --work-title "Six limit cycles …"
+#
+# Writes .transcripts/drafts/<id>.yml (ignored by git and by Jekyll) unless
+# --out is given; --out - prints it. Redaction runs on everything written.
+
+require "fileutils"
+require "optparse"
+require_relative "lib/draft"
+
+opts = { human: "Caleb", zone: "US Eastern", tz: "America/New_York", all: false }
+parser = OptionParser.new do |o|
+  o.banner = "Usage: tools/transcripts/draft HARNESS LOG --id ID [options]\n" \
+             "HARNESS: #{Transcripts::Draft::ADAPTERS.keys.join(", ")}"
+  o.on("--id ID", "Digest id (file name)") { |v| opts[:id] = v }
+  o.on("--work-id ID", "Work item it belongs to, e.g. note/lv-six-cycles") { |v| opts[:work_id] = v }
+  o.on("--work-title TITLE") { |v| opts[:work_title] = v }
+  o.on("--human NAME", "Default: Caleb") { |v| opts[:human] = v }
+  o.on("--zone NAME", "Time zone label shown with times. Default: US Eastern") { |v| opts[:zone] = v }
+  o.on("--tz IANA", "Default: America/New_York") { |v| opts[:tz] = v }
+  o.on("--all", "Keep every agent message, not just the last before each human turn") { opts[:all] = true }
+  o.on("--out PATH", "Output file, or - for stdout") { |v| opts[:out] = v }
+end
+args = parser.parse(ARGV)
+abort(parser.help) unless args.length == 2 && opts[:id]
+
+harness, log = args
+session = Transcripts::Draft.read(harness, log)
+digest = Transcripts::Draft.build(
+  session, human: opts[:human], zone: opts[:zone], tz: opts[:tz], all: opts[:all],
+  work: { id: opts[:work_id], title: opts[:work_title] }
+)
+yaml = Transcripts::Draft.to_yaml(digest, session, id: opts[:id])
+
+out = opts[:out] || File.join(__dir__, "../../.transcripts/drafts/#{opts[:id]}.yml")
+if out == "-"
+  $stdout.write(yaml)
+else
+  FileUtils.mkdir_p(File.dirname(out))
+  File.write(out, yaml)
+  seq = digest.dig("source", "sequence")
+  warn "#{File.expand_path(out)}: #{seq.count("h")} human and #{seq.count("a")} agent messages, " \
+       "#{session.tool_calls} tool calls, #{digest["chapters"][0]["turns"].length} turns drafted"
+  session.warnings.each { |w| warn "warning: #{w}" }
+end

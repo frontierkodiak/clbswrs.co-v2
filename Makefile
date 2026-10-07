@@ -2,7 +2,7 @@
 
 JEKYLL_BUILD_ARGS ?=
 
-.PHONY: setup build serve check clean
+.PHONY: setup build serve test check clean
 
 setup:
 	bundle install
@@ -13,7 +13,10 @@ build:
 serve:
 	bundle exec jekyll serve --livereload
 
-check: build
+test:
+	ruby tools/transcripts/test/transcripts_test.rb
+
+check: test build
 	bundle exec htmlproofer ./_site --disable-external --no-enforce-https
 	test -f _site/index.html
 	test -f _site/404.html

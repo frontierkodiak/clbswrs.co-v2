@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Check transcript digests the way the site build does: format, editing
+# rules against the turns, and the redaction scan.
+#
+#   tools/transcripts/check                    # every _data/transcripts/*.yml
+#   tools/transcripts/check --drafts FILE...   # drafts too (placeholders allowed)
+
+require "yaml"
+require_relative "lib/digest"
+
+drafts = ARGV.delete("--drafts")
+files = ARGV.empty? ? Dir[File.join(__dir__, "../../_data/transcripts/*.yml")] : ARGV
+errors = files.flat_map do |f|
+  Transcripts::Digest.validate(File.basename(f, ".yml"), YAML.safe_load_file(f, permitted_classes: [Date, Time]),
+                               drafts_allowed: !!drafts)
+end
+if errors.empty?
+  puts "#{files.length} digest#{"s" unless files.length == 1} pass"
+else
+  warn errors.join("\n")
+  exit 1
+end
