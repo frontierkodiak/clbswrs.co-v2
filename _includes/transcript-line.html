@@ -7,7 +7,7 @@
 {%- if w -%}
 <p class="tx-line">The making of this: {{ w.sessions }} session{% if w.sessions != 1 %}s{% endif %},
 {%- for id in w.digests %}
-{%- assign x = site.data.transcripts[id]._ %} {% if include.variant == "c" %}<span class="tx-chips" aria-hidden="true">{% for ch in x.chapters %}<span class="tx-chip tx-k{{ ch.number }}"></span>{% endfor %}</span> {% endif %}<a href="{{ x.url | relative_url }}">conversation{% if w.sessions > 1 %} {{ forloop.index }}{% endif %}&nbsp;→</a>{% unless forloop.last %},{% endunless %}
+{%- assign x = site.data.transcripts[id]._ %} <span class="tx-chips" aria-hidden="true">{% for ch in x.chapters %}<span class="tx-chip tx-k{{ ch.number }}"></span>{% endfor %}</span> <a href="{{ x.url | relative_url }}">conversation{% if w.sessions > 1 %} {{ forloop.index }}{% endif %}&nbsp;→</a>{% unless forloop.last %},{% endunless %}
 {%- endfor -%}
 </p>
 {%- endif -%}

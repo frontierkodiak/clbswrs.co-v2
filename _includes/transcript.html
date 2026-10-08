@@ -1,30 +1,25 @@
 {%- comment -%}
-  A curated transcript. {% include transcript.html id="<digest id>" variant="a|b|c" %}
+  A curated transcript. {% include transcript.html id="<digest id>" %}
   Reads _data/transcripts/<id>.yml; everything under `_` was computed by
   _plugins/transcripts.rb from the digest itself.
 {%- endcomment -%}
 {%- assign d = site.data.transcripts[include.id] -%}
 {%- assign x = d._ -%}
-{%- assign v = include.variant | default: "a" -%}
-<article class="tx tx--{{ v }}">
+<article class="tx">
   <div class="tx-head">
     <h1 class="tx-title">{{ d.title | escape }}</h1>
     {%- if x.draft %}
     <p class="tx-draft">Draft. Not approved for publication.</p>
     {%- endif %}
     <p class="tx-prov">A curated transcript of the {{ x.harness }} session behind {% if x.work_kind %}{{ x.work_kind }} {% endif %}{% if d.work.url %}<a href="{{ d.work.url | relative_url }}">{{ d.work.title | escape }}</a>{% else %}<cite>{{ d.work.title | escape }}</cite>{% endif %}, {{ x.date }}.</p>
-    {%- if v == "c" %}
     <ol class="tx-strip" aria-label="Every message in the session, in order: {{ x.counts.human_messages }} from {{ x.human }}, {{ x.counts.agent_messages }} from {{ x.agent }}">
       {%- for cell in x.strip -%}
       <li class="tx-cell tx-cell--{{ cell.k }}{% if cell.chapter %} tx-k{{ cell.chapter }}{% else %} tx-cell--cut{% endif %}">{% if cell.anchor %}<a href="#{{ cell.anchor }}" aria-label="message {{ forloop.index }}"></a>{% endif %}</li>
       {%- endfor -%}
     </ol>
     <p class="tx-strip-key"><span class="tx-key tx-key--h"></span> {{ x.human }} <span class="tx-key tx-key--a"></span> {{ x.agent }} <span class="tx-key tx-key--cut"></span> left out. One square per message, in order; colour is the chapter.</p>
-    {%- endif %}
     <p class="tx-preface"><strong>How to read this.</strong> {{ x.preface | join: " " }}</p>
-    {%- if v == "b" %}
-    <p class="tx-ledger tx-ledger--top">{{ x.ledger | join: " · " }}</p>
-    {%- endif %}
+    <p class="tx-ledger">{{ x.ledger | join: " · " }}</p>
   </div>
 
   {%- for ch in d.chapters %}
@@ -33,16 +28,14 @@
     <h2 class="tx-chapter-title"><span class="tx-num">{{ cx.number }}</span> {{ ch.title | escape }}</h2>
     {%- for t in ch.turns %}
     {%- assign tx = cx.turns[forloop.index0] %}
-    {%- if v == "b" and tx.gap %}
+    {%- if tx.gap %}
     <p class="tx-gap"><span>{{ tx.gap }} later</span></p>
     {%- endif %}
-    {%- if v == "b" and tx.day %}
+    {%- if tx.day %}
     <p class="tx-day">{{ tx.day }}</p>
     {%- endif %}
     <div class="tx-turn tx-turn--{{ t.role }}" id="{{ tx.anchor }}">
-      {%- if v == "b" %}
       <time class="tx-clock" datetime="{{ t.at }}">{{ tx.clock }}</time>
-      {%- endif %}
       <div class="tx-body">
       {%- if t.role == "human" %}
         <p class="tx-text">{{ t.text | strip | escape }}{% if t.mode == "condensed" %} <em class="tx-mark">(condensed)</em>{% endif %}</p>
@@ -65,9 +58,6 @@
     {%- if d.summary %}
     <p class="tx-summary">{{ d.summary | escape }}</p>
     {%- endif %}
-    {%- unless v == "b" %}
-    <p class="tx-ledger">{{ x.ledger | join: " · " }}</p>
-    {%- endunless %}
     <p class="tx-source">{{ x.harness }}{% if d.source.harness_version %} {{ d.source.harness_version }}{% endif %}, {{ x.models }}. Session {{ d.source.session | slice: 0, 8 }}. Times from the session log, {{ x.zone }}.</p>
   </div>
 </article>
