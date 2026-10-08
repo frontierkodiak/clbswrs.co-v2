@@ -50,8 +50,13 @@ renders anything. It fails the build if a digest:
 - claims an editing rule its turns break, or points a turn at a message of
   the wrong role.
 
-A phrase that is a false positive goes in `redaction.allow` with the digest,
-where the reviewer sees it.
+It also fails if a transcript page has body text, or a secret, path or host
+in its own fields. Those pages are front matter only.
+
+A host name or email address that is a false positive (an ordinary word
+that matches a machine's name) goes in `redaction.allow` with the digest,
+where the reviewer sees it. Secrets, paths and addresses can't be allowed;
+reword or redact them.
 
 ## Format
 
