@@ -57,6 +57,30 @@ class RedactionTest < Minitest::Test
   def test_allow_list
     assert_empty R.scan("ssh examplehost", allow: ["examplehost"])
   end
+
+  # PL-330: each input must redact to text that then scans clean, with no
+  # part of the secret left over.
+  def test_redacted_text_scans_clean_and_keeps_nothing
+    {
+      "https://sk-ant-api03-#{"a1B2" * 8}:Sup3rSecret123@db/path" => "Sup3rSecret123",
+      "applicationKey: N2Zug0evLcHDlh_L0Z0AJhiGGdY" => "N2Zug0ev",
+      "keyID K005#{"Ab3d" * 7}+/ next" => "Ab3d",
+      "Authorization: Basic dXNlcjpwYXNzd29yZA==" => "dXNlcjpw",
+      "curl -u admin:hunter2pass https://example.org" => "hunter2pass",
+      "See /Users/Caleb/Private Project/notes.md today" => "notes.md",
+      "secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY here" => "bPxRfiCY"
+    }.each do |text, leftover|
+      out = R.redact(text)
+      assert_empty R.scan(out), "#{text} -> #{out}"
+      refute_includes out, leftover, text
+    end
+    assert_equal "See [redacted path] today", R.redact("See /Users/Caleb/Private Project/notes.md today")
+  end
+
+  def test_allow_list_cannot_clear_a_secret
+    key = "sk-ant-api03-#{"a1B2" * 8}"
+    assert_equal ["secret"], R.scan("use #{key}", allow: [key]).map(&:kind)
+  end
 end
 
 class ClaudeCodeAdapterTest < Minitest::Test
@@ -162,5 +186,20 @@ class DigestTest < Minitest::Test
     d = curated
     d["chapters"][0]["turns"][1]["excerpt"]["text"] = "ran it on examplehost"
     assert(D.validate("x", d).any? { |e| e.include?("host at chapters.0.turns.1.excerpt.text") })
+  end
+
+  def test_allow_list_entries_are_checked
+    key = "sk-ant-api03-#{"a1B2" * 8}"
+    d = curated
+    d["chapters"][0]["turns"][1]["excerpt"]["text"] = "the key was #{key}"
+    d["redaction"] = { "allow" => [key] }
+    errors = D.validate("x", d)
+    assert(errors.any? { |e| e.include?("secret at chapters.0.turns.1.excerpt.text") })
+    assert(errors.any? { |e| e.include?("secret at redaction.allow.0") })
+
+    d = curated
+    d["chapters"][0]["turns"][1]["excerpt"]["text"] = "ran it on examplehost"
+    d["redaction"] = { "allow" => ["examplehost"] }
+    assert_empty D.validate("x", d)
   end
 end

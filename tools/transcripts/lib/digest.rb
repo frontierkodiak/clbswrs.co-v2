@@ -113,10 +113,10 @@ module Transcripts
       end
       (RULES - rules).each { |r| err.("must state the editing rule #{r}") }
 
+      # An allow entry can clear only host and email findings, so one that
+      # holds a secret, path or address is itself reported here.
       allow = Array(data.dig("redaction", "allow"))
       Redaction.scan_tree(data, allow: allow) do |f|
-        next if f.where.start_with?("redaction.allow")
-
         err.("#{f.kind} at #{f.where}: #{f.preview}")
       end
       errors

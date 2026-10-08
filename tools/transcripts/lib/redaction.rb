@@ -32,10 +32,18 @@ module Transcripts
       /\bhf_[A-Za-z0-9]{30,}/,
       /\blin_(?:api|oauth)_[A-Za-z0-9]{30,}/,
       /\br8_[A-Za-z0-9]{30,}/,
-      /\bK00[0-9A-Za-z+\/]{28}\b/,
+      # Backblaze B2 application keys (legacy K00… form).
+      %r{(?<![A-Za-z0-9+/])K00[0-9A-Za-z+/]{25,}(?![A-Za-z0-9+/=])},
       /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/,
-      /\bBearer\s+[A-Za-z0-9._~+\/-]{20,}=*/,
-      /(?:\b|(?<=_))(?:api[_-]?key|secret|token|passw(?:or)?d|pwd|auth)[A-Za-z0-9_]*["']?\s*[:=]\s*["']?[A-Za-z0-9_\-.\/+=]{12,}/i,
+      %r{\bBearer\s+[A-Za-z0-9._~+/-]{20,}=*},
+      # Authorization headers in any scheme (Basic, Token, Digest, …).
+      %r{\bAuthorization["']?\s*[:=]\s*["']?(?:[A-Za-z-]+\s+)?[A-Za-z0-9._~+/=-]{8,}}i,
+      # curl -u user:password
+      %r{(?:(?<=\s)-u|--user)\s+["']?[^\s:"']+:[^\s"']+},
+      # A value assigned to a name that ends in key, secret, token, password
+      # or auth: ANTHROPIC_API_KEY=…, "applicationKey": "…", password: ….
+      %r{(?<![A-Za-z0-9])[A-Za-z0-9_.-]*?(?:key|secret|token|passw(?:or)?d|passwd|pwd|auth|credentials?)["']?\s*(?:[:=]|=>)\s*["']?[A-Za-z0-9_\-./+=]{12,}}i,
+      # Credentials in a URL: scheme://user:password@host
       %r{\b[a-z][a-z0-9+.-]*://[^\s/:@]+:[^\s/@]+@}i
     ].freeze
 
@@ -71,26 +79,39 @@ module Transcripts
     # Long mixed-case alphanumeric runs that look like keys. Pure hex (git
     # and content hashes, UUIDs) is left alone.
     ENTROPY_CANDIDATE = /(?<![A-Za-z0-9+=_-])[A-Za-z0-9+_-]{32,}={0,2}(?![A-Za-z0-9+=_-])/
+    # A bare 40-character AWS secret access key, which may contain "/".
+    AWS_SECRET_CANDIDATE = %r{(?<![A-Za-z0-9+/=])[A-Za-z0-9+/]{40}(?![A-Za-z0-9+/=])}
+
+    # After a home path, a space followed by a word with a slash is still the
+    # path ("/Users/x/Private Project/notes.md").
+    PATH_CONTINUATION = %r{\A [^\s'"`)\]>,;]*[/\\][^\s'"`)\]>,;]*}
+
+    # The only kinds a digest's redaction.allow list can clear: both have
+    # ordinary-word false positives. Secrets, paths and addresses never.
+    ALLOWABLE = %w[host email].freeze
+    # When matches overlap they merge, and the merged span takes the most
+    # serious kind.
+    RANK = %w[secret path address host email].freeze
 
     module_function
 
+    # Findings in one string. An allowed phrase clears only host and email
+    # findings that fall wholly inside it.
     def scan(text, where: nil, allow: [])
       return [] unless text.is_a?(String) && !text.empty?
 
-      text = mask_allowed(text, allow)
-      findings = []
-      each_match(text) { |kind, match| findings << Finding.new(kind: kind, match: match, where: where) }
-      findings
+      allowed = allowed_ranges(text, allow)
+      spans(text).filter_map do |range, kind|
+        next if ALLOWABLE.include?(kind) && allowed.any? { |a| a.cover?(range.begin) && a.cover?(range.end - 1) }
+
+        Finding.new(kind: kind, match: text[range], where: where)
+      end
     end
 
-    def redact(text, allow: [])
+    def redact(text)
       return text unless text.is_a?(String)
 
-      spans = []
-      each_match(mask_allowed(text, allow)) { |kind, _match, range| spans << [range, kind] }
-      spans.sort_by { |range, _| -range.begin }.each_with_object(text.dup) do |(range, kind), out|
-        out[range] = format(MARKER, kind)
-      end
+      spans(text).reverse.each_with_object(text.dup) { |(range, kind), out| out[range] = format(MARKER, kind) }
     end
 
     # Walks a parsed digest and scans every string in it, so nothing the
@@ -103,33 +124,52 @@ module Transcripts
       end
     end
 
-    def each_match(text)
-      taken = []
-      emit = lambda do |kind, md|
-        range = md.begin(0)...md.end(0)
-        next if taken.any? { |t| t.cover?(range.begin) || range.cover?(t.begin) }
+    # Every match in the text, overlapping ones merged, in order.
+    def spans(text)
+      found = []
+      add = ->(kind, md) { found << [md.begin(0)...md.end(0), kind] }
 
-        taken << range
-        yield kind, md[0], range
+      SECRET_PATTERNS.each { |re| text.to_enum(:scan, re).each { add.call("secret", Regexp.last_match) } }
+      text.to_enum(:scan, QUOTED_PATH_PATTERN).each { add.call("path", Regexp.last_match) }
+      [PATH_PATTERN, HOME_RELATIVE_PATTERN].each do |re|
+        text.to_enum(:scan, re).each do
+          md = Regexp.last_match
+          stop = md.end(0)
+          while (more = PATH_CONTINUATION.match(text[stop..]))
+            stop += more[0].length
+          end
+          found << [md.begin(0)...stop, "path"]
+        end
       end
-
-      SECRET_PATTERNS.each { |re| text.to_enum(:scan, re).each { emit.call("secret", Regexp.last_match) } }
-      text.to_enum(:scan, QUOTED_PATH_PATTERN).each { emit.call("path", Regexp.last_match) }
-      text.to_enum(:scan, PATH_PATTERN).each { emit.call("path", Regexp.last_match) }
-      text.to_enum(:scan, HOME_RELATIVE_PATTERN).each { emit.call("path", Regexp.last_match) }
-      text.to_enum(:scan, TAILNET_PATTERN).each { emit.call("host", Regexp.last_match) }
-      text.to_enum(:scan, ADDRESS_PATTERN).each { emit.call("address", Regexp.last_match) }
+      text.to_enum(:scan, TAILNET_PATTERN).each { add.call("host", Regexp.last_match) }
+      text.to_enum(:scan, ADDRESS_PATTERN).each { add.call("address", Regexp.last_match) }
       text.to_enum(:scan, EMAIL_PATTERN).each do
         md = Regexp.last_match
-        emit.call("email", md) unless PUBLIC_EMAILS.include?(md[0].downcase)
+        add.call("email", md) unless PUBLIC_EMAILS.include?(md[0].downcase)
       end
       text.to_enum(:scan, /[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]|[A-Za-z0-9]/).each do
         md = Regexp.last_match
-        emit.call("host", md) if host?(md[0])
+        add.call("host", md) if host?(md[0])
       end
-      text.to_enum(:scan, ENTROPY_CANDIDATE).each do
-        md = Regexp.last_match
-        emit.call("secret", md) if key_like?(md[0])
+      [ENTROPY_CANDIDATE, AWS_SECRET_CANDIDATE].each do |re|
+        text.to_enum(:scan, re).each do
+          md = Regexp.last_match
+          add.call("secret", md) if key_like?(md[0])
+        end
+      end
+      merge(found)
+    end
+
+    def merge(found)
+      found.sort_by { |range, _| [range.begin, -range.end] }.each_with_object([]) do |(range, kind), out|
+        last = out.last
+        if last && range.begin < last[0].end
+          stop = [last[0].end, range.end].max
+          worse = [last[1], kind].min_by { |k| RANK.index(k) }
+          out[-1] = [last[0].begin...stop, worse]
+        else
+          out << [range, kind]
+        end
       end
     end
 
@@ -148,12 +188,12 @@ module Transcripts
       entropy >= 4.0
     end
 
-    # Allowed phrases are blanked out (same length, so positions hold) before
-    # matching. Each digest's allow list is reviewed with the digest.
-    def mask_allowed(text, allow)
-      return text if allow.nil? || allow.empty?
+    def allowed_ranges(text, allow)
+      Array(allow).flat_map do |phrase|
+        next [] if phrase.to_s.empty?
 
-      allow.reduce(text) { |t, phrase| t.gsub(phrase) { |m| " " * m.length } }
+        text.to_enum(:scan, phrase.to_s).map { (Regexp.last_match.begin(0)...Regexp.last_match.end(0)) }
+      end
     end
   end
 end

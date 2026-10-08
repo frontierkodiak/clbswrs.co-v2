@@ -4,7 +4,7 @@ require_relative "../tools/transcripts/lib/digest"
 
 # Checks every transcript digest after the site is read and before anything is
 # rendered. Any finding (a secret, a private path, a host name, a draft, a
-# rule the turns don't keep) stops the build. Then it attaches the computed
+# rule the turns don't keep, body text on a transcript page) stops the build. Then it attaches the computed
 # fields the includes print, under `_` in each digest, and indexes digests by
 # the work item they belong to in `site.data.transcript_works`.
 Jekyll::Hooks.register :site, :post_read do |site|
@@ -14,9 +14,16 @@ Jekyll::Hooks.register :site, :post_read do |site|
   errors = digests.flat_map do |id, data|
     Transcripts::Digest.validate(id, data, drafts_allowed: drafts_allowed)
   end
+  # A transcript page is front matter only: the layout prints the digest and
+  # nothing else, and the page's own fields (title, permalink) go through the
+  # same scan, since the URL is printed wherever the page is linked.
   pages = site.pages.select { |p| p.data["digest"] }
   pages.each do |p|
     errors << "#{p.path}: no digest named #{p.data["digest"].inspect}" unless digests.key?(p.data["digest"])
+    errors << "#{p.path}: a transcript page holds front matter only" unless p.content.strip.empty?
+    Transcripts::Redaction.scan_tree(p.data.merge("url" => p.url)) do |f|
+      errors << "#{p.path}: #{f.kind} at #{f.where}: #{f.preview}"
+    end
   end
   unless errors.empty?
     raise Jekyll::Errors::FatalException,
