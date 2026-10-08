@@ -1,0 +1,127 @@
+/**
+ * Transcript embed (_includes/transcript.html)
+ *
+ * Two styles carry the conversation: the person's words upright, the
+ * agent's summaries in italic. A clock runs down the margin, with each new
+ * day and every long silence marked. The strip at the top has one square
+ * per message in the session; colour is the chapter and grey is left out.
+ */
+
+@use "sass:list";
+
+// After Ellsworth Kelly's Spectrum Colors Arranged by Chance; one per
+// chapter, in order, repeating after twelve.
+$tx-kelly: #d7261e, #f07f1d, #f4c21b, #7fb03f, #1e8c4e, #138a8a,
+           #1f6fb2, #26338c, #6a3f98, #c2307b, #ee8ab0, #8a5a2b;
+$tx-gutter: 3.6em;
+
+.tx {
+  --tx-muted: color-mix(in srgb, var(--text-color) 58%, var(--background-color));
+  --tx-faint: color-mix(in srgb, var(--text-color) 14%, var(--background-color));
+  --tx-hair: color-mix(in srgb, var(--text-color) 22%, var(--background-color));
+  margin-top: 22px;
+}
+
+.tx p { white-space: normal; }
+.tx-title { margin-top: 0; }
+.tx-prov { color: var(--tx-muted); margin-top: 4px; }
+.tx-prov cite { font-style: normal; }
+.tx-prov cite::before { content: "“"; }
+.tx-prov cite::after { content: "”"; }
+.tx-draft { font-weight: bold; margin-bottom: 8px; }
+.tx-preface { margin-top: 15px; }
+.tx-ledger, .tx-source { color: var(--tx-muted); margin: 0 0 4px; font-variant-numeric: tabular-nums; }
+.tx-ledger { margin-top: 10px; }
+
+/* The strip: every message in the session, in order. */
+.tx-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 6px;
+}
+:not(.menu) > .tx-strip > li::before { content: none; margin: 0; }
+.tx-cell { width: 12px; height: 12px; position: relative; }
+.tx-cell a { position: absolute; inset: 0; }
+.tx-cell a:hover { background: none; outline: 1px solid var(--text-color); }
+.tx-cell--a { transform: scale(0.55); }
+.tx-cell--cut { background: var(--tx-faint); }
+.tx-strip-key { color: var(--tx-muted); margin: 0; }
+.tx-key { display: inline-block; width: 10px; height: 10px; margin: 0 2px 0 6px; vertical-align: -0.5px; background: var(--text-color); }
+.tx-key:first-child { margin-left: 0; }
+.tx-key--a { transform: scale(0.55); }
+.tx-key--cut { background: var(--tx-faint); }
+
+/* Chapters and turns, with the clock in the margin. */
+.tx-chapter { margin-top: 30px; }
+.tx-chapter-title {
+  display: grid;
+  grid-template-columns: $tx-gutter 1fr;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0 0 12px;
+}
+.tx-num { color: var(--tx-muted); font-variant-numeric: tabular-nums; }
+.tx-num::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  vertical-align: -1px;
+  background: var(--tx-k);
+}
+
+.tx-turn { display: grid; grid-template-columns: $tx-gutter 1fr; margin-bottom: 14px; }
+.tx-clock { color: var(--tx-muted); font-variant-numeric: tabular-nums; }
+.tx-turn--agent .tx-clock { opacity: 0.6; }
+.tx-turn p, .tx-text p { margin: 0 0 8px; }
+.tx-turn--human .tx-text { white-space: pre-wrap; }
+.tx-turn--agent .tx-text { font-style: italic; }
+.tx-turn--agent .tx-text code { font-style: normal; }
+.tx-mark { color: var(--tx-muted); }
+
+.tx-day { color: var(--tx-muted); font-weight: bold; margin: 0 0 6px; }
+.tx-gap {
+  display: grid;
+  grid-template-columns: $tx-gutter 1fr;
+  color: var(--tx-muted);
+  margin: 4px 0 16px;
+}
+.tx-gap span { grid-column: 2; border-top: 1px dotted var(--tx-hair); padding-top: 2px; }
+
+.tx-excerpt { margin: -2px 0 6px; }
+.tx-excerpt summary {
+  cursor: pointer;
+  color: var(--tx-muted);
+  list-style: none;
+  display: inline-block;
+}
+.tx-excerpt summary::-webkit-details-marker { display: none; }
+.tx-excerpt summary::before { content: "▸ "; }
+.tx-excerpt[open] summary::before { content: "▾ "; }
+.tx-excerpt summary:hover { color: var(--text-color); }
+.tx-excerpt-text {
+  margin: 6px 0 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--tx-hair);
+  max-height: 32em;
+  overflow: auto;
+}
+.tx-excerpt-text h2 { font-size: 1em; margin: 0 0 6px; }
+.tx-excerpt-text code { font-size: 0.95em; }
+
+.tx-foot { margin-top: 30px; padding-top: 10px; border-top: var(--border); }
+.tx-summary { font-style: italic; }
+
+/* The one-line link on a card or note (_includes/transcript-line.html). */
+.tx-line { margin: 6px 0 0; }
+.tx-chips { white-space: nowrap; }
+.tx-chip { display: inline-block; width: 8px; height: 8px; margin-right: 2px; background: var(--tx-k); }
+
+@for $i from 1 through 48 {
+  .tx-k#{$i} { --tx-k: #{list.nth($tx-kelly, ($i - 1) % list.length($tx-kelly) + 1)}; }
+  .tx-cell.tx-k#{$i} { background: var(--tx-k); }
+}
